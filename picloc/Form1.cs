@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using ExifLib;
 using System.Diagnostics;
+using System.IO;
 
 namespace picloc
 {
@@ -61,7 +62,16 @@ namespace picloc
             {
                 reader = new ExifReader(fileName);
 
+                // Get the image thumbnail (if present)
+                var thumbnailBytes = reader.GetJpegThumbnailBytes();
 
+                if (thumbnailBytes == null)
+                    pictureBox1.Image = null;
+                else
+                {
+                    using (var stream = new MemoryStream(thumbnailBytes))
+                        pictureBox1.Image = Image.FromStream(stream);
+                }
 
                 // To read a single field, use code like this:
                 /*
